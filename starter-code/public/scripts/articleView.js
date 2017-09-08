@@ -136,11 +136,14 @@ var app = app || {};
     $('pre code').each((i, block) => hljs.highlightBlock(block));
   };
 
-  articleView.initAdminPage = function() {
-    // TODO: Call the Handlebars `.compile` function, which will return a function for you to use where needed.
+  articleView.initAdminPage = function() { 
+    // DONE TODO: Call the Handlebars `.compile` function, which will return a function for you to use where needed.
     // Make sure you assign the result of your Handlebars.compile call to a variable called "template", since
     // we are then calling "template" on line 117.
 
+    let openTemplate = $('#stats-template').html();
+    let template = Handlebars.compile(openTemplate);
+  
     // REVIEW: We use `forEach` here because we are relying on the side-effects of the callback function:
     // appending to the DOM.
     // The callback is not required to return anything.

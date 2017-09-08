@@ -50,6 +50,7 @@ var app = app || {};
   */
 
     rows.map( function ( row ){
+      console.log(row);
       return Article.all;
     })
 
@@ -134,6 +135,6 @@ var app = app || {};
       .then(callback);
   };
 
-  Article.module();
+  module.Article = Article;
 
 })( app );

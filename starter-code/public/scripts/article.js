@@ -1,9 +1,10 @@
 'use strict';
 var app = app || {};
 
+(function(module){
 // REVIEW: Check out all of the functions that we've cleaned up with arrow function syntax.
 
-// TODO: Wrap the contents of this file, except for the preceding 'use strict' and 'var app...' declarations, in an IIFE.
+// DONE TODO: Wrap the contents of this file, except for the preceding 'use strict' and 'var app...' declarations, in an IIFE.
 // Give the IIFE a parameter called 'module'.
 // At the very end of the code, but still inside the IIFE, attach the 'Article' object to 'module'.
 // Where the IIFE is invoked, pass in the global 'app' object that is defined above.
@@ -22,9 +23,9 @@ function Article(rawDataObj) {
   Object.keys(rawDataObj).forEach(key => this[key] = rawDataObj[key]);
 }
 
-Article.all = [];
+  Article.all = [];
 
-Article.prototype.toHtml = function() {
+  Article.prototype.toHtml = function() {
   const template = Handlebars.compile($('#article-template').text());
 
   this.daysAgo = parseInt((new Date() - new Date(this.publishedOn))/60/60/24/1000);
@@ -34,21 +35,23 @@ Article.prototype.toHtml = function() {
   return template(this);
 };
 
-Article.loadAll = rows => {
-  rows.sort((a,b) => (new Date(b.publishedOn)) - (new Date(a.publishedOn)));
+  Article.loadAll = rows => {
+    rows.sort((a,b) => (new Date(b.publishedOn)) - (new Date(a.publishedOn)));
 
-  // TODO: Refactor this forEach code, by using a `.map` call instead, since what we are trying to accomplish
-  // is the transformation of one collection into another. Remember that we can set variables equal to the result
-  // of functions. So if we set a variable equal to the result of a .map, it will be our transformed array.
-  // There is no need to push to anything.
+    // DONE TODO: Refactor this forEach code, by using a `.map` call instead, since what we are trying to accomplish
+    // is the transformation of one collection into another. Remember that we can set variables equal to the result
+    // of functions. So if we set a variable equal to the result of a .map, it will be our transformed array.
+    // There is no need to push to anything.
 
-  /* OLD forEach():
-  rawData.forEach(function(ele) {
-  Article.all.push(new Article(ele));
-});
-*/
+    /* OLD forEach():
+    rawData.forEach(function(ele) {
+    Article.all.push(new Article(ele));
+    });
+    */
 
-};
+    return Article.all.map(rawData => rawData.Article);
+
+  };
 
 Article.fetchAll = callback => {
   $.get('/articles')
@@ -60,9 +63,9 @@ Article.fetchAll = callback => {
   )
 };
 
-// TODO: Chain together a `map` and a `reduce` call to get a rough count of all words in all articles.
-Article.numWordsAll = () => {
-  return Article.all.map().reduce()
+// DONE TODO: Chain together a `map` and a `reduce` call to get a rough count of all words in all articles.
+Article.numWordsAll = (article.body) => {
+  return Article.all.map(() => (body.split())).reduce()
 };
 
 // TODO: Chain together a `map` and a `reduce` call to produce an array of unique author names. You will
@@ -128,3 +131,7 @@ Article.prototype.updateRecord = function(callback) {
   .then(console.log)
   .then(callback);
 };
+
+module.Article = Article;
+
+})(app);

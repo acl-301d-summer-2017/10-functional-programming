@@ -38,7 +38,7 @@ var app = app || {};
   Article.loadAll = rows => {
     rows.sort((a, b) => (new Date(b.publishedOn)) - (new Date(a.publishedOn)));
 
-    // TODO: Refactor this forEach code, by using a `.map` call instead, since what we are trying to accomplish
+    // DONE-TODO: Refactor this forEach code, by using a `.map` call instead, since what we are trying to accomplish
     // is the transformation of one collection into another. Remember that we can set variables equal to the result
     // of functions. So if we set a variable equal to the result of a .map, it will be our transformed array.
     // There is no need to push to anything.
@@ -49,26 +49,29 @@ var app = app || {};
   });
   */
 
-    rows.map( function ( row ){
-      console.log(row);
-      return Article.all;
-    })
+    Article.all = rows.map( function ( row ){
+      return new Article( row )
+    });
 
   };
 
   Article.fetchAll = callback => {
     $.get('/articles')
       .then(
-      results => {
-        Article.loadAll(results);
-        callback();
-      }
+        results => {
+          Article.loadAll(results);
+          callback();
+        }
       )
   };
 
   // TODO: Chain together a `map` and a `reduce` call to get a rough count of all words in all articles.
   Article.numWordsAll = () => {
-    return Article.all.map().reduce()
+    return Article.all.map( function(ele){
+      return ele.body.split( '' ).length}).reduce( function(sum, value){
+      return sum + value
+
+    }, 0 );
   };
 
   // TODO: Chain together a `map` and a `reduce` call to produce an array of unique author names. You will

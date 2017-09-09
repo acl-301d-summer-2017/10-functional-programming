@@ -9,37 +9,38 @@ var app = app || {};
 // Where the IIFE is invoked, pass in the global 'app' object that is defined above.
 
 
-(function ( module ) { 
+(function (module) {
   function Article(rawDataObj) {
-  /* REVIEW: In lab 8, we explored a lot of new functionality going on here. Let's re-examine
-  the concept of context.
-  Normally, "this" inside of a constructor function refers to the newly instantiated object.
-  However, in the function we're passing to forEach, "this" would normally refer to "undefined"
-  in strict mode. As a result, we had to pass a second argument to forEach to make sure our "this"
-  was still referring to our instantiated object.
-  One of the primary purposes of lexical arrow functions, besides cleaning up syntax to use fewer
-  lines of code, is to also preserve context. That means that when you declare a function using
-  lexical arrows, "this" inside the function will still be the same "this" as it was outside
-  the function.
-  As a result, we no longer have to pass in the optional "this" argument to forEach!*/
+    /* REVIEW: In lab 8, we explored a lot of new functionality going on here. Let's re-examine
+    the concept of context.
+    Normally, "this" inside of a constructor function refers to the newly instantiated object.
+    However, in the function we're passing to forEach, "this" would normally refer to "undefined"
+    in strict mode. As a result, we had to pass a second argument to forEach to make sure our "this"
+    was still referring to our instantiated object.
+    One of the primary purposes of lexical arrow functions, besides cleaning up syntax to use fewer
+    lines of code, is to also preserve context. That means that when you declare a function using
+    lexical arrows, "this" inside the function will still be the same "this" as it was outside
+    the function.
+    As a result, we no longer have to pass in the optional "this" argument to forEach!*/
     Object.keys(rawDataObj).forEach(key => this[key] = rawDataObj[key]);
+  
   }
-
   Article.all = [];
 
-  Article.prototype.toHtml = function() {
+  Article.prototype.toHtml = function () {
     const template = Handlebars.compile($('#article-template').text());
 
-    this.daysAgo = parseInt((new Date() - new Date(this.publishedOn))/60/60/24/1000);
+    this.daysAgo = parseInt((new Date() - new Date(this.publishedOn)) / 60 / 60 / 24 / 1000);
     this.publishStatus = this.publishedOn ? `published ${this.daysAgo} days ago` : '(draft)';
     this.body = marked(this.body);
 
     return template(this);
   };
 
-  }
+
+
   Article.loadAll = rows => {
-    rows.sort((a,b) => (new Date(b.publishedOn)) - (new Date(a.publishedOn)));
+    rows.sort((a, b) => (new Date(b.publishedOn)) - (new Date(a.publishedOn)));
 
     // TODO-DONE: Refactor this forEach code, by using a `.map` call instead, since what we are trying to accomplish
     // is the transformation of one collection into another. Remember that we can set variables equal to the result
@@ -51,26 +52,26 @@ var app = app || {};
     Article.all.push(new Article(ele));
   });
   */
-    Article.all = rows.map (row => new Article(row))
+    Article.all = rows.map(row => new Article(row))
   };
 
   Article.fetchAll = callback => {
     $.get('/articles')
-    .then(
-      results => {
-        Article.loadAll(results);
-        callback();
-      }
-    )
+      .then(
+        results => {
+          Article.loadAll(results);
+          callback();
+        }
+      )
   };
 
   // TODO/DONE: Chain together a `map` and a `reduce` call to get a rough count of all words in all articles.
   Article.numWordsAll = () => {
     return Article.all.map(function (ele) {
-        return ele.body.split(" ").length;
-      }).reduce( function(accumulator, words) {
-        return accumulator + words;
-      })
+      return ele.body.split(" ").length;
+    }).reduce(function (accumulator, words) {
+      return accumulator + words;
+    })
   };
 
   // TODO/DONE: Chain together a `map` and a `reduce` call to produce an array of unique author names. You will
@@ -78,23 +79,32 @@ var app = app || {};
   Article.allAuthors = (author) => {
     return Article.all.map(function (ele) {
       return ele.author
-    }).reduce( function (accumulator, author) {
-      if (!accumulator.includes( authors)) {
-        accumulator.push( authors );
+    }).reduce(function (accumulator, author) {
+      if (!accumulator.includes(author)) {
+        accumulator.push(author);
       }
       return accumulator;
-    }, [] );
+    }, []);
   };
 
+  // TODO: Transform each author string into an object with properties for
+  // the author's name, as well as the total number of words across all articles
+  // written by the specified author.
+  // HINT: This .map should be setup to return an object literal with two properties.
+  // The first property should be pretty straightforward, but you will need to chain
+  // some combination of filter, map, and reduce to get the value for the second
+  // property.
   Article.numWordsByAuthor = () => {
     return Article.allAuthors().map(author => {
-      // TODO: Transform each author string into an object with properties for
-      // the author's name, as well as the total number of words across all articles
-      // written by the specified author.
-      // HINT: This .map should be setup to return an object literal with two properties.
-      // The first property should be pretty straightforward, but you will need to chain
-      // some combination of filter, map, and reduce to get the value for the second
-      // property.
+
+
+      return {
+        author_name: author,
+        word_count: Article.all.filter(x => x.author === author)
+          .map(ele => ele.body.split(" ").length)
+          .reduce((a, n) => a + n)
+      };
+
 
     })
   };
@@ -104,20 +114,20 @@ var app = app || {};
       url: '/articles',
       method: 'DELETE',
     })
-    .then(console.log) // REVIEW: Check out this clean syntax for just passing 'assumed' data into a named function!
-                      // The reason we can do this has to do with the way Promise.prototype.then works. It's a little
-                      // outside the scope of 301 material, but feel free to research!
-    .then(callback);
+      .then(console.log) // REVIEW: Check out this clean syntax for just passing 'assumed' data into a named function!
+      // The reason we can do this has to do with the way Promise.prototype.then works. It's a little
+      // outside the scope of 301 material, but feel free to research!
+      .then(callback);
   };
 
-  Article.prototype.insertRecord = function(callback) {
+  Article.prototype.insertRecord = function (callback) {
     // REVIEW: Why can't we use an arrow function here for .insertRecord()??
-    $.post('/articles', {author: this.author, authorUrl: this.authorUrl, body: this.body, category: this.category, publishedOn: this.publishedOn, title: this.title})
+    $.post('/articles', { author: this.author, authorUrl: this.authorUrl, body: this.body, category: this.category, publishedOn: this.publishedOn, title: this.title })
       .then(console.log)
       .then(callback);
   };
 
-  Article.prototype.deleteRecord = function(callback) {
+  Article.prototype.deleteRecord = function (callback) {
     $.ajax({
       url: `/articles/${this.article_id}`,
       method: 'DELETE'
@@ -126,7 +136,7 @@ var app = app || {};
       .then(callback);
   };
 
-  Article.prototype.updateRecord = function(callback) {
+  Article.prototype.updateRecord = function (callback) {
     $.ajax({
       url: `/articles/${this.article_id}`,
       method: 'PUT',
@@ -143,5 +153,6 @@ var app = app || {};
       .then(console.log)
       .then(callback);
   };
-  module.Article = Article; 
-}) 
+  module.Article = Article;
+     
+})   (app);

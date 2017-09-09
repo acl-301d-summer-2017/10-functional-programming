@@ -36,6 +36,7 @@ var app = app || {};
   }
 
   Article.loadAll = rows => {
+    console.log('loaded')
     rows.sort((a, b) => (new Date(b.publishedOn)) - (new Date(a.publishedOn)))
 
     // DONE TODO: Refactor this forEach code, by using a `.map` call instead, since what we are trying to accomplish
@@ -49,46 +50,44 @@ var app = app || {};
     });
     */
 
-    return Article.all.map(rawData => rawData.Article)
+    return Article.all = rows.map(rawData => new Article(rawData))
   }
 
   Article.fetchAll = callback => {
+    console.log('fetched')
     $.get('/articles')
-  .then(
-    results => {
-      Article.loadAll(results)
-      callback()
-    }
-  )
+      .then(
+        results => {
+          Article.loadAll(results)
+          callback()
+        }
+      )
   }
 
-// DONE TODO: Chain together a `map` and a `reduce` call to get a rough count of all words in all articles.
+  // DONE TODO: Chain together a `map` and a `reduce` call to get a rough count of all words in all articles.
   Article.numWordsAll = () => {
     return Article.all.map((article) => (article.body.split(' ').length)).reduce((a, b) => a + b)
   }
 
-// TODO-DONE: Chain together a `map` and a `reduce` call to produce an array of unique author names. You will
-// probably need to use the optional accumulator argument in your reduce call.
+  // TODO-DONE: Chain together a `map` and a `reduce` call to produce an array of unique author names. You will
+  // probably need to use the optional accumulator argument in your reduce call.
   Article.allAuthors = () => {
     return Article.all.map((article) => (article.author))
-  .reduce((accumulator, author) => {
-    if (!accumulator.includes(author)) {
-      return accumulator.push(author)
-    };
-    console.log('is it working')
-    return accumulator
-  }, [])
+      .reduce((accumulator, author) => {
+        if (!accumulator.includes(author)) {
+          accumulator.push(author)
+          return accumulator
+        }
+      }, [])
   }
 
   Article.numWordsByAuthor = () => {
     return Article.allAuthors().map(author => {
-      let WPA = Article.all.filter((article) => author = article.author)
-      .map((article) => (article.body.split(' ').length))
-      // .reduce((a, b) => a + b)
-
       return {
         name: author,
-        words: WPA
+        words: Article.all.filter((article) => author = article.author)
+          .map((article) => (article.body.split(' ').length))
+          .reduce((a, b) => a + b)
       }
     // TODO: Transform each author string into an object with properties for
     // the author's name, as well as the total number of words across all articles
@@ -105,17 +104,17 @@ var app = app || {};
       url: '/articles',
       method: 'DELETE'
     })
-  .then(console.log) // REVIEW: Check out this clean syntax for just passing 'assumed' data into a named function!
-                     // The reason we can do this has to do with the way Promise.prototype.then works. It's a little
-                     // outside the scope of 301 material, but feel free to research!
-  .then(callback)
+      .then(console.log) // REVIEW: Check out this clean syntax for just passing 'assumed' data into a named function!
+    // The reason we can do this has to do with the way Promise.prototype.then works. It's a little
+    // outside the scope of 301 material, but feel free to research!
+      .then(callback)
   }
 
   Article.prototype.insertRecord = function (callback) {
   // REVIEW: Why can't we use an arrow function here for .insertRecord()??
     $.post('/articles', {author: this.author, authorUrl: this.authorUrl, body: this.body, category: this.category, publishedOn: this.publishedOn, title: this.title})
-  .then(console.log)
-  .then(callback)
+      .then(console.log)
+      .then(callback)
   }
 
   Article.prototype.deleteRecord = function (callback) {
@@ -123,8 +122,8 @@ var app = app || {};
       url: `/articles/${this.article_id}`,
       method: 'DELETE'
     })
-  .then(console.log)
-  .then(callback)
+      .then(console.log)
+      .then(callback)
   }
 
   Article.prototype.updateRecord = function (callback) {
@@ -141,9 +140,9 @@ var app = app || {};
         author_id: this.author_id
       }
     })
-  .then(console.log)
-  .then(callback)
+      .then(console.log)
+      .then(callback)
   }
 
-  module.Article = Article
+  module.Article = Article;
 })(app)

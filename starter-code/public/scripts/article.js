@@ -95,6 +95,19 @@ var app = app || {};
       // The first property should be pretty straightforward, but you will need to chain
       // some combination of filter, map, and reduce to get the value for the second
       // property.
+      {
+        name: author,
+        wordCount: Article.all.filter(function(article){
+          return article.author === author;
+        }).map(function(ele){
+          return ele.body.split(' ').length();
+        }).reduce(function(sum, value){
+          return sum + value;
+        }, 0);})
+        })
+      }  
+    
+
 
     })
   };

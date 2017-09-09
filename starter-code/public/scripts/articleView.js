@@ -144,8 +144,6 @@ var app = app || {};
     
     let openTemplate = $('#stats-template').html();
     let template = Handlebars.compile(openTemplate);
-    $('#temp').append(template(app.Article.numWordsByAuthor()[0]));
-
     
     // REVIEW: We use `forEach` here because we are relying on the side-effects of the callback function:
     // appending to the DOM.

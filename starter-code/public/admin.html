@@ -12,10 +12,7 @@
     <link rel="icon" type="image/x-icon" href="https://avatars2.githubusercontent.com/u/18607604?v=3&s=200">
     <!-- TODO: Setup a template for each row of the Author Stats section of this page: -->
     <script id="stats-template" type="text/x-handlebars-template">
-      <section>
-        <h3>{{author}}</h3>
-        <p>{{wordCount}}</p>
-      </section>
+      <li>{{author}} : {{wordCount}}</li>
     </script>
 
   </head>
@@ -29,7 +26,7 @@
       </section>
       <nav class="main-nav">
         <div class="icon-menu"></div>
-        <ul>
+        <ul id = "temp">
           <li class="tab"><a href="index.html" class="icon-home"></a>Blog</li>
           <li class="tab"><a href="stats.html"></a>Stats</li>
           <li class="tab"><a href="new.html">New Article</a></li>
@@ -60,8 +57,10 @@
     <script>
       // TODO: After we fetch and load all the articles, what view function do we want to run next?
       // Let's pass in a callback function, to determine what happens AFTER all articles are loaded.
+      // setTimeout(, 1000);
+      setTimeout(app.articleView.initAdminPage, 1000);
       app.Article.fetchAll(() => console.log('got results'));
-      articleView.initAdminPage();
-    </script>
+
+      </script>
   </body>
 </html>

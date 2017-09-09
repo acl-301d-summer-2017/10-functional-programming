@@ -10,7 +10,8 @@ var app = app || {};
 // At the very end of the code, but still inside the IIFE, attach the 'Article' object to 'module'.
 // Where the IIFE is invoked, pass in the global 'app' object that is defined above.
   function Article(rawDataObj) {
-  /* REVIEW: In lab 8, we explored a lot of new functionality going on here. Let's re-examine
+    console.log('in article constructor');
+    /* REVIEW: In lab 8, we explored a lot of new functionality going on here. Let's re-examine
   the concept of context.
   Normally, "this" inside of a constructor function refers to the newly instantiated object.
   However, in the function we're passing to forEach, "this" would normally refer to "undefined"
@@ -38,7 +39,6 @@ var app = app || {};
 
   Article.loadAll = rows => {
     rows.sort((a,b) => (new Date(b.publishedOn)) - (new Date(a.publishedOn)));
-
     // DONE TODO: Refactor this forEach code, by using a `.map` call instead, since what we are trying to accomplish
     // is the transformation of one collection into another. Remember that we can set variables equal to the result
     // of functions. So if we set a variable equal to the result of a .map, it will be our transformed array.
@@ -49,9 +49,7 @@ var app = app || {};
   Article.all.push(new Article(ele));
 }
 */
-
-    Article.all = rawData.map(a => new Article(a));
-
+    Article.all = rows.map( a => new Article(a) );
   };
 
 
@@ -59,6 +57,7 @@ var app = app || {};
     $.get('/articles')
       .then(
         results => {
+          console.log('results are',results);
           Article.loadAll(results);
           callback();
         }
@@ -74,8 +73,18 @@ var app = app || {};
   // probably need to use the optional accumulator argument in your reduce call.
   Article.allAuthors = () => {
     return Article.all
-      .map(x => x.author)
-      .reduce((unique, individual) =>unique.includes(individual) ? unique.push(individual) : unique, []);
+      .map(x => x.author_id)
+      .reduce((unique, individual) => {
+        if (unique.includes(individual))
+          return unique;
+        else {
+          unique.push(individual)
+          return unique;
+        }
+
+      },[]);
+      
+      // unique.includes(individual) ? unique.push(individual) : unique, []);
   };
 
   Article.numWordsByAuthor = () => {
@@ -87,12 +96,12 @@ var app = app || {};
     // The first property should be pretty straightforward, but you will need to chain
     // some combination of filter, map, and reduce to get the value for the second
     // property.
-    let count = this.all
-      .filter(x => x.author === author)
-      .map(x => x.body.split(' ').length)
-      .reduce((sum, n) => (sum + n), 0);
+      let count = this.all
+        .filter(x => x.author_id === author)
+        .map(x => x.body.split(' ').length)
+        .reduce((sum, n) => (sum + n), 0);
 
-    return { name:author, wordCount:count };  
+      return { name:author, wordCount:count };
     })
   };
 

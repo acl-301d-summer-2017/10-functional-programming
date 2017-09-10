@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 var app = app || {};
 
 // REVIEW: Check out all of the functions that we've cleaned up with arrow function syntax.

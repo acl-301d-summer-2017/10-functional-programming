@@ -87,23 +87,46 @@ var app = app || {};
       // unique.includes(individual) ? unique.push(individual) : unique, []);
   };
 
+
+  /*
+    () => // zero params does need  ()
+    oneParam => // doesn't need ()
+    (oneParam, twoParam) => // 2 or more does need ()
+  */
+
   Article.numWordsByAuthor = () => {
     return Article.allAuthors().map(function (author) {
-    // DONE TODO: Transform each author string into an object with properties for
-    // the author's name, as well as the total number of words across all articles
-    // written by the specified author.
-    // HINT: This .map should be setup to return an object literal with two properties.
-    // The first property should be pretty straightforward, but you will need to chain
-    // some combination of filter, map, and reduce to get the value for the second
-    // property.
 
       let count = Article.all
-        .filter(x => x.author === author)
-        .map(x => x.body.split(' ').length)
+        .filter(article => article.author === author)
+        // [{ author: 'Louis', title: 'walk me', body: 'lots of words' },
+        // { author: 'Louis', title: 'walk me now', body: 'lots of words ands tuff' }
+        // { author: 'Louis', title: 'walk me pls', body: 'lots of words ......' }]
+        .map(article => article.body.split(' ').length)
+        // [3, 5, 100]
         .reduce((sum, n) => (sum + n), 0);
+        // 108
 
-      return { name:author, wordCount:count };
+      return { name: author, wordCount: count };
     })
+
+
+    // end goal return array of objects { name: authorName, wordCount: count }
+
+    /*
+
+    ['Louis', 'Katie Sue', 'George' ] 
+
+    [ { name: 'Louis', wordCount: 0 },
+      { name: 'Katie Sue', wordCount: 0 },
+      { name: 'George', wordCount: 0 }]
+
+    [ { name: 'Louis', wordCount: 200 },
+      { name: 'Katie Sue', wordCount: 190 },
+      { name: 'George', wordCount: 6000 }]
+
+
+    */
   };
 
   Article.truncateTable = callback => {

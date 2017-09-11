@@ -143,12 +143,14 @@ var app = app || {};
     // we are then calling "template" on line 117.
     
     let openTemplate = $('#stats-template').html();
-    let template = Handlebars.compile(openTemplate);
+    let templateFiller = Handlebars.compile(openTemplate); // <li>{{name}} : {{wordCount}}</li>
     
     // REVIEW: We use `forEach` here because we are relying on the side-effects of the callback function:
     // appending to the DOM.
     // The callback is not required to return anything.
-    app.Article.numWordsByAuthor().forEach(stat => $('.author-stats').append(template(stat)));
+    app.Article.numWordsByAuthor().forEach(stat => $('.author-stats').append(templateFiller(stat))); 
+    // stat = { name: 'Louis', wordCount: 500 }
+    // templateFiller( stat )  results in  <li> Louis: 500 </li>
     // REVIEW: Simply write the correct values to the page:
     
     $('#blog-stats .articles').text(app.Article.all.length);

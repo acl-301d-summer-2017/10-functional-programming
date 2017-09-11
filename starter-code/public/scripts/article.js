@@ -81,20 +81,26 @@ var app = app || {};
 
   Article.numWordsByAuthor = () => {
     return Article.allAuthors().map(author => {
-      return
+      return {
+        name: author,
+        words: Article.all.filter((article) => author = article.author)
+          .map((article) => (article.body.split(' ').length))
+          .reduce((a, b) => a + b)
+      }
 
 
 
       
     })
-   };
-      // TODO: Transform each author string into an object with properties for
-      // the author's name, as well as the total number of words across all articles
-      // written by the specified author.
-      // HINT: This .map should be setup to return an object literal with two properties.
-      // The first property should be pretty straightforward, but you will need to chain
-      // some combination of filter, map, and reduce to get the value for the second
-      // property.
+  };
+
+  // DONE TODO: Transform each author string into an object with properties for
+  // the author's name, as well as the total number of words across all articles
+  // written by the specified author.
+  // HINT: This .map should be setup to return an object literal with two properties.
+  // The first property should be pretty straightforward, but you will need to chain
+  // some combination of filter, map, and reduce to get the value for the second
+  // property.
 
   Article.truncateTable = callback => {
     $.ajax({
@@ -140,4 +146,6 @@ var app = app || {};
       .then(console.log)
       .then(callback);
   };
+  
+  module.Article = Article;
 })(app);

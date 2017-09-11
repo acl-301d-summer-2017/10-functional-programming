@@ -144,9 +144,9 @@ var app = app || {};
     // REVIEW: We use `forEach` here because we are relying on the side-effects of the callback function:
     // appending to the DOM.
     // The callback is not required to return anything.
-    app.Article.numWordsByAuthor().forEach(stat => $('.author-stats').append(template(stat)));
-    var TemplateScript = $('#author-template').html();
-    var template = Handlebars.compile(theTemplateScript);
+ 
+    var templateScript = $('#author-template').html();
+    var template = Handlebars.compile(templateScript);
     var compiledHtml = template(this);
 
     app.Articles.numWordsByAuthor().forEach(stat => $(' .author-stats').append(template(stat)));

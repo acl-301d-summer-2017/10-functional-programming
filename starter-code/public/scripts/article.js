@@ -53,6 +53,7 @@ var app = app || {};
   });
   */
     Article.all = rows.map(row => new Article(row))
+    console.log(Article.all);
   };
 
   Article.fetchAll = callback => {
@@ -155,4 +156,4 @@ var app = app || {};
   };
   module.Article = Article;
      
-})   (app);
+}) (app);
